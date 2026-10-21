@@ -8,7 +8,7 @@ from openai import OpenAI
 WIKI_BASE = "https://bindingofisaacrebirth.wiki.gg/wiki/"
 TEST_PAGE = "Brimstone"
 
-HEADERS = {"User-Agent": "IsaacRAG/0.1 (karry19990921mdy@gmail.com)"}
+HEADERS = {"User-Agent": "IsaacRAG/0.1"}
 
 
 def test_wiki() -> None:
