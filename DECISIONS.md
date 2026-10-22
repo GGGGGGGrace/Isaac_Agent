@@ -85,6 +85,14 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Example: Tonsil existed as an item only in Afterbirth and later became a trinket; its row has no quality.
 - Why: players ask about older versions; the flag lets the bot say an item is legacy instead of presenting it as current.
 
+**2026-10-21 - Chunking (`chunk.py`, Phase 1)**
+- One chunk per page section (Effects, Notes, Synergies, Interactions, Trivia...); split sections over 30~1,500 characters at top-level bullet boundaries, never mid-bullet.
+- Prefix every chunk with "Item — Section:".
+- Preserve nested list structure and version markers.
+- Skip non-text sections (In-game footage, Gallery, table of contents, navboxes).
+- Add one summary chunk per item from `items.json` (name, type, availability, quality, recharge, quote, description), omitting missing fields.
+- Chunk each URL only once (some items share a page, e.g. Broken Shovel).
+
 ---
 
 ## 5. Repository & environment
@@ -139,10 +147,3 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 
 ## 8. Planned (not yet implemented)
 
-**Chunking (`chunk.py`, Phase 1)**
-- One chunk per page section (Effects, Notes, Synergies, Interactions, Trivia...); split sections over ~1,500 characters at top-level bullet boundaries, never mid-bullet.
-- Prefix every chunk with "Item — Section:".
-- Preserve nested list structure and version markers.
-- Skip non-text sections (In-game footage, Gallery, table of contents, navboxes).
-- Add one summary chunk per item from `items.json` (name, type, availability, quality, recharge, quote, description), omitting missing fields.
-- Chunk each URL only once (some items share a page, e.g. Broken Shovel).

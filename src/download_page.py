@@ -1,3 +1,17 @@
+"""
+Step 2: download every item page listed in data/items.json into data/raw/.
+ 
+- Skips pages that are already cached (safe to stop and re-run).
+- Waits 1 second only after real network requests.
+- Stops the whole run on 403/429 (handled inside fetch_url).
+- Records other failures in data/failed_pages.json and keeps going.
+ 
+Usage (from the repo root):
+    python src/download_page.py --limit 5     # test on a few items
+    python src/download_page.py               # full run
+    python src/download_page.py --force       # re-download even if cached
+"""
+
 import argparse
 import json
 import re
