@@ -27,7 +27,7 @@ def filename_for(item: dict) -> str:
 
 def load_items() -> list[dict]:
     if not ITEMS_PATH.exists():
-        sys.exit(f"[error] {ITEMS_PATH} not found. Run `python src/fetch.py` first.")
+            sys.exit(f"[error] {ITEMS_PATH} not found. Run `python src/fetch.py` first.")
     return json.loads(ITEMS_PATH.read_text(encoding="utf-8"))
 
 

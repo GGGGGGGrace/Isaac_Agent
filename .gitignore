@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# fetched + generated data (rebuild with the scripts)
+data/
+
 # Distribution / packaging
 .Python
 build/

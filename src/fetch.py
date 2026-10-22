@@ -114,6 +114,15 @@ def parse_table(table: Tag, item_type: str) -> list[dict]:
  
         name = link.get_text(strip=True)
         url = urljoin(WIKI_BASE, link["href"])
+
+        # Which game versions the item exists in, from the marker image before the name
+        # (e.g. "(except in Rebirth)", "(in Afterbirth)"). No marker = in every version.
+        markers = [
+            img.get("alt", "").strip()
+            for img in name_cell.find_all("img")
+            if img.get("alt", "").strip().startswith("(")
+        ]
+        availability = " ".join(markers) if markers else "all versions"
  
         entity_id = id_cell.get_text(strip=True)          # e.g. "5.100.118"
         last_part = entity_id.split(".")[-1]
@@ -137,6 +146,7 @@ def parse_table(table: Tag, item_type: str) -> list[dict]:
             "entity_id": entity_id,
             "collectible_id": collectible_id,
             "type": item_type,
+            "availability": availability,
             "recharge": recharge,
             "quote": quote,
             "description": description,
@@ -155,13 +165,16 @@ if __name__ == "__main__":
 
     items = parse_table(a_table, "active") + parse_table(p_table, "passive")
 
-    # Guard against the same item appearing twice in one run (keep the first).
+    # Guard against the same row appearing twice in one run (keep the first).
+    # Neither field is unique alone: some items share a name (Broken Shovel),
+    # and IDs were reused across DLCs (Tonsil vs. the later item with 5.100.474).
     seen, unique = set(), []
     for item in items:
-        if item["name"] in seen:
-            print(f"[warn] duplicate item skipped: {item['name']}")
+        key = (item["entity_id"], item["name"])
+        if key in seen:
+            print(f"[warn] duplicate row skipped: {key}")
             continue
-        seen.add(item["name"])
+        seen.add(key)
         unique.append(item)
     items = unique
 
