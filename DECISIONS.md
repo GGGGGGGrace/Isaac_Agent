@@ -128,7 +128,45 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 
 ---
 
-## 7. Evaluation
+## 7. Embeddings & vector store
+
+**2026-10-22 — CPU-only PyTorch**
+- Installed with `uv pip install torch --index-url https://download.pytorch.org/whl/cpu` before the other requirements.
+- Why: embedding ~4,400 short chunks on CPU takes about 4 minutes, which is fine for a one-time build; avoids a multi-GB CUDA download.
+- `torch` isn't listed in `requirements.txt` (it comes in as a dependency of `sentence-transformers`); the CPU install step is documented in the README setup instead.
+
+**2026-10-22 — Embedding model: `BAAI/bge-small-en-v1.5`, run locally**
+- 384-dimensional vectors, 512-token input limit (≈2,000 characters; longer input is silently truncated — the reason chunks are capped at ~1,500 characters).
+- Embeddings are normalized (`normalize_embeddings=True`), so cosine similarity equals the dot product.
+- Encoded in batches of 64.
+
+**2026-10-22 — Query instruction for questions only**
+- Questions are prefixed with `"Represent this sentence for searching relevant passages: "`, as recommended for BGE retrieval; chunks (passages) are embedded without it.
+- Playground observation: simple questions produce right answer, but top three scores are close, gaps are bigger with query instruction
+
+**2026-10-23 — Vector store: Chroma, persistent on disk**
+- `chromadb.PersistentClient(path="data/chroma")`, which is gitignored with the rest of `data/`.
+- Collection `isaac_items`, cosine distance (confirmed in the collection configuration: `'space': 'cosine'`).
+- The embedding model's name is stored in the collection metadata (`embedding_model`) so search code can refuse to query with a different model.
+
+**2026-10-23 — Full rebuild on every `index.py` run**
+- The collection is deleted and recreated each run, then filled with `upsert` in batches of 1,000.
+- Why: guarantees no stale chunks survive after re-chunking (upsert alone never deletes removed chunks).
+
+**2026-10-23 — Vectors are always computed by our code; Chroma only stores and searches**
+- Searches use `query_embeddings`, never `query_texts`.
+- Why: the collection has Chroma's default embedding function attached. Querying with text would embed the question with a different model than the chunks, producing meaningless results without any error.
+
+**2026-10-23 — Index result**
+- 4,429 chunks stored; `collection.count()` matches `chunks.jsonl`. Embedding took ~4 minutes on CPU.
+- Sanity query "What item gives me a blood laser?" → top 3: Brimstone (0.250), Technology 2 (0.286), Mega Blast (0.287), all summary chunks.
+- Notes for Phase 3:
+  - Distances are close together (0.25 vs 0.29), so the right answer wins only narrowly; a reranker is a likely improvement.
+  - Short "which item…" questions favour summary chunks; check whether section chunks (e.g. Synergies) rank well for multi-item questions.
+
+---
+
+## 8. Evaluation
 
 **2026-10-20 — 25-question evaluation set written before pipeline code (`eval/questions.jsonl`)**
 - Mix: 10 fact, 5 synergy, 4 paraphrase, 3 version, 3 unanswerable.
@@ -142,8 +180,3 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 **2026-10-20 — Scoring rubric**
 - Retrieval hit: all `expected_pages` appear in the final retrieved chunks.
 - Answer score: 2 = correct and complete, 1 = partial, 0 = wrong or missing, −1 = hallucinated (confident claim not supported by the context). Hallucinations tracked separately.
-
----
-
-## 8. Planned (not yet implemented)
-
