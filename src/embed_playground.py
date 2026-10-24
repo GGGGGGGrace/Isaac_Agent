@@ -11,12 +11,10 @@ The model (~130 MB) downloads on the first run, then loads from cache.
 import json
 import random
 from pathlib import Path
+from config import MODEL_NAME, CHROMA_PATH, COLLECTION_NAME, QUERY_INSTRUCTION
 
 from sentence_transformers import SentenceTransformer, util
 
-MODEL_NAME = "BAAI/bge-small-en-v1.5"
-QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
-CHUNKS_PATH = Path("data/chunks/chunks.jsonl")
 
 # =============================================================================
 # PLAY HERE: change these and re-run

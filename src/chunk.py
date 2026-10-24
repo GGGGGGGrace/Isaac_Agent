@@ -31,8 +31,8 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
 from fetch import ITEMS_PATH, replace_version_markers
 from download_page import RAW_DIR, filename_for
+from config import CHUNKS_PATH
 
-CHUNKS_PATH = Path("data/chunks/chunks.jsonl")
 MAX_CHARS = 1500        # soft limit for a section chunk's body (excluding the prefix)
 MIN_CHARS = 30          # drop near-empty chunks
 SKIP_SECTIONS = {"in-game footage", "gallery", "contents", "videos"}

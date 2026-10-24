@@ -1,14 +1,11 @@
 import json
 import chromadb
+from config import MODEL_NAME, QUERY_INSTRUCTION, CHROMA_PATH, COLLECTION_NAME, CHUNKS_PATH
 from pathlib import Path
 
 from sentence_transformers import SentenceTransformer, util
 
-MODEL_NAME = "BAAI/bge-small-en-v1.5"
 CHUNKS_PATH = Path("data/chunks/chunks.jsonl")
-CHROMA_PATH = "data/chroma"
-COLLECTION_NAME = "isaac_items"
-QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "  # questions only
 
 def create_fresh_collection(client: chromadb.ClientAPI):
     """delete any old collection and create new ones that uses cosine distance"""
