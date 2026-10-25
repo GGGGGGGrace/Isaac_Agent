@@ -328,7 +328,58 @@ def clean_metadata(meta: dict) -> dict:
     return {k: v for k, v in meta.items() if v is not None}
 
 
-def summary_chunk(item: dict) -> dict:
+def infobox_value(soup: BeautifulSoup, label: str) -> Tag | None:
+    """
+    Find an infobox row by its label text (e.g. "Item pool") and return the value element.
+    Matches on text, not class names, so it works for table rows (th -> td),
+    definition lists (dt -> dd) and div/heading-based infoboxes.
+    """
+    label_el = soup.find(
+        lambda t: t.name in ("th", "td", "dt", "h3", "div", "span")
+        and t.get_text(" ", strip=True) == label
+    )
+    if label_el is None:
+        return None
+    value = label_el.find_next_sibling()
+    if value is None and label_el.parent is not None:
+        value = label_el.parent.find_next_sibling()
+    return value
+
+
+def parse_infobox(html: str) -> dict:
+    """Extract item pools and tags from the infobox at the top of an item page."""
+    soup = BeautifulSoup(html, "lxml")
+    body = soup.select_one("#mw-content-text .mw-parser-output")
+    info = {"item_pool": [], "tags": []}
+    if body is None:
+        return info
+
+    pool_el = infobox_value(body, "Item pool")
+    if pool_el is not None:
+        entries = pool_el.find_all("li") or [pool_el]
+        for li in entries:
+            # Game mode comes from an indicator image/link title, e.g. "Greed and greedier modes only".
+            mode = next(
+                (el.get("title") for el in li.find_all(["a", "img"])
+                 if "modes only" in (el.get("title") or "")),
+                None,
+            )
+            replace_version_markers(li)            # "(in Repentance ...)" image -> text
+            text = tidy(li.get_text(" "))
+            if not text:
+                continue
+            info["item_pool"].append(f"{text} [{mode}]" if mode else text)
+
+    tags_el = infobox_value(body, "Tags")
+    if tags_el is not None:
+        # Tags are icons; their meaning is in the link/image title ("Leviathan transformation item").
+        titles = [el.get("title") for el in tags_el.find_all(["a", "img"]) if el.get("title")]
+        info["tags"] = list(dict.fromkeys(titles))   # dedupe, keep order
+
+    return info
+
+
+def summary_chunk(item: dict, infobox: dict) -> dict:
     """One short, dense chunk per item, built from the Items table."""
     title = page_title(item["url"])
     lines = [f"{title} — Summary:"]
@@ -341,6 +392,10 @@ def summary_chunk(item: dict) -> dict:
         lines.append(f"Quality: {q}")
     if item.get("recharge"):
         lines.append(f"Recharge: {item['recharge']}")
+    if infobox.get("item_pool"):
+        lines.append("Item pool: " + "; ".join(infobox["item_pool"]))
+    if infobox.get("tags"):
+        lines.append("Tags: " + "; ".join(infobox["tags"]))
     if item.get("quote"):
         lines.append(f"Pickup quote: \"{item['quote']}\"")
     if item.get("description"):
@@ -420,15 +475,19 @@ def main() -> None:
     for item in items:
         by_url.setdefault(item["url"], []).append(item)
 
-    chunks: list[dict] = [summary_chunk(i) for i in items]
+    chunks: list[dict] = []
     missing = []
 
     for url, group in by_url.items():
         path = RAW_DIR / filename_for(group[0])
         if not path.exists():
             missing.append(group[0]["name"])
+            chunks.extend(summary_chunk(i, {}) for i in group)   # summary without infobox data
             continue
-        chunks.extend(page_chunks(group, path.read_text(encoding="utf-8")))
+        html = path.read_text(encoding="utf-8")
+        infobox = parse_infobox(html)
+        chunks.extend(summary_chunk(i, infobox) for i in group)
+        chunks.extend(page_chunks(group, html))
 
     if args.only:
         for c in chunks:
