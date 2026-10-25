@@ -44,7 +44,7 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Only fetch `/wiki/...` article URLs.
 
 **2026-10-20 — Item list comes from the `/wiki/Items` page (one request)**
-- The Activated and Passive Collectibles tables give every item's link plus metadata, so per-page infobox parsing isn't needed for metadata.
+- The Activated and Passive Collectibles tables give every item's link plus metadata, so per-page infobox parsing isn't needed for most metadata (see section 5 for the item pool exception).
 - Category pages were set aside because their pagination (`?pagefrom=`) is disallowed by robots.txt.
 
 **2026-10-21 — Item pages downloaded by a separate script (`download_page.py`)**
@@ -85,17 +85,46 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Example: Tonsil existed as an item only in Afterbirth and later became a trinket; its row has no quality.
 - Why: players ask about older versions; the flag lets the bot say an item is legacy instead of presenting it as current.
 
-**2026-10-21 - Chunking (`chunk.py`, Phase 1)**
-- One chunk per page section (Effects, Notes, Synergies, Interactions, Trivia...); split sections over 30~1,500 characters at top-level bullet boundaries, never mid-bullet.
-- Prefix every chunk with "Item — Section:".
-- Preserve nested list structure and version markers.
-- Skip non-text sections (In-game footage, Gallery, table of contents, navboxes).
-- Add one summary chunk per item from `items.json` (name, type, availability, quality, recharge, quote, description), omitting missing fields.
-- Chunk each URL only once (some items share a page, e.g. Broken Shovel).
+---
+
+## 5. Chunking (`chunk.py`)
+
+**2026-10-22 — One chunk per page section, plus one summary chunk per item**
+- Section chunks: one per `<h2>` section (Effects, Notes, Synergies, Interactions, Trivia, Bugs, ...). Content before the first `<h2>` (infobox, intro) is not chunked as text; the summary chunk covers it.
+- `<h3>` subheadings stay inside their parent section as label lines (e.g. "Overridden by Brimstone:").
+- Every chunk starts with "Page — Section:" so it is self-describing and the item name is part of what gets embedded.
+- Summary chunks are built from `items.json` (type, availability, quality — both values when it changed between versions — recharge, quote, description); missing fields are omitted rather than written as "None".
+
+**2026-10-22 — Text cleaning**
+- Nested lists keep their indentation ("- " lines, 2 spaces per level); tables become one line per row (cells joined with " | ").
+- Version markers kept as text; math markup replaced with its plain LaTeX source.
+- Removed noise: edit links, table of contents, galleries and videos (In-game footage, Gallery sections skipped), HTML comments (MediaWiki's "NewPP limit report" leaked into chunks as text), navboxes (class `nav-box`, plus a link-density fallback that skips tables/divs whose text is over 70% link text).
+
+**2026-10-22 — Chunk size limits**
+- `MAX_CHARS = 1500`, `MIN_CHARS = 30` (near-empty chunks dropped).
+- Sections are packed at top-level bullet boundaries, never mid-bullet.
+- Oversized blocks (a single top-level bullet with many sub-bullets) are split at second-level bullets, with the parent line repeated at the top of every piece so each piece still says what it's about. A sentence-level fallback handles single bullets that are still too long.
+- Why: the embedding model reads at most 512 tokens (≈2,000 characters); longer text is silently truncated. Before the fix, 10 chunks were over the limit (max 3,791 characters); after it, 0.
+
+**2026-10-22 — Page identity comes from the wiki URL, not the display name**
+- Two different items both display as "Odd Mushroom" in the Items table (pages `Odd_Mushroom_(Thin)` and `Odd_Mushroom_(Large)`), which caused duplicate chunk IDs and ambiguous chunk text.
+- `page_title(url)` decodes the URL into a unique page title ("Odd Mushroom (Thin)"); the display name is kept separately in the summary metadata.
+- Each URL is chunked only once (both Broken Shovel entries share one page).
+- Repeated section titles on one page are numbered in chunk IDs ("Notes", "Notes (2)") — found on the Cursed Eye page.
+- A duplicate `chunk_id` check stops the run before writing, since chunk IDs become vector-store IDs.
+
+**2026-10-22 — Metadata is vector-store friendly**
+- No `None` values or lists in chunk metadata (Chroma rejects them): missing fields are dropped, and names sharing a page are joined into one string.
+
+**2026-10-25 — Infobox data added to summary chunks**
+- Found by the retrieval baseline: questions about where to find an item (f04, f08) "hit" the right page, but no retrieved chunk contained the item pool. Pools live only in the infobox, which chunking skipped, and the Items table has no pool column.
+- `parse_infobox()` now extracts the item pool (with version markers and game mode) and tags; both are added to the summary chunk.
+- Infobox rows are located by label text ("Item pool", "Tags"), not class names, to stay robust to markup differences.
+- Lesson: page-level hit@k hid a missing-data problem. It counts any chunk from the right page, even one without the answer.
 
 ---
 
-## 5. Repository & environment
+## 6. Repository & environment
 
 **2026-10-19 — Python 3.12 via uv, in a project virtual environment**
 - System Python on the dev machine (Ubuntu) is 3.8, which is end-of-life and unsupported by current libraries. uv installs a separate Python without touching the system one.
@@ -107,14 +136,23 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 **2026-10-21 — All of `data/` is gitignored**
 - Raw HTML, `items.json`, chunks, and the vector store are rebuilt by the scripts.
 - Why: reproducible from code, avoids large noisy diffs, and avoids redistributing CC BY-SA content in the repo.
-- Rebuild order: `fetch.py` → `download_page.py` → `chunk.py`.
+- Rebuild order: `fetch.py` → `download_page.py` → `chunk.py` → `index.py`.
 
 **2026-10-19 — Repository license: MIT (code only)**
 - Wiki content remains under CC BY-SA 4.0 and is not part of the repo.
 
+**2026-10-23 — Shared settings in `config.py`**
+- `MODEL_NAME`, `QUERY_INSTRUCTION`, `CHROMA_PATH`, `COLLECTION_NAME`, `CHUNKS_PATH` live in one module imported by `index.py`, `search.py` and the eval scripts.
+- Why: a model or path changed in one file but not another would silently produce wrong results (questions and chunks embedded by different models).
+
+**2026-10-24 — Hugging Face offline mode**
+- `config.py` sets `HF_HUB_OFFLINE=1` (via `os.environ.setdefault`), so the cached model loads without a network check or the unauthenticated-request warning. No HF token needed.
+- `config` must be imported before `sentence_transformers`, because `huggingface_hub` reads the variable once at import time.
+- `setdefault` lets a one-off `HF_HUB_OFFLINE=0 python src/index.py` re-download the model on a fresh machine (documented in the README).
+
 ---
 
-## 6. Models
+## 7. Models
 
 **2026-10-19 — LLM: DeepSeek (`deepseek-flash`) via the OpenAI-compatible API**
 - Suggested by mentor for low token cost; works with the `openai` Python SDK by changing `base_url`.
@@ -122,13 +160,13 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Plan: use non-thinking mode for grounded RAG answers (faster, cheaper).
 - Note: requests are processed on DeepSeek's servers; only public wiki content is sent.
 
-**2026-10-19 — Embeddings: local model (planned: `BAAI/bge-small-en-v1.5` via sentence-transformers)**
+**2026-10-19 — Embeddings: local model, separate from the LLM**
 - DeepSeek offers no embedding model, so embeddings and generation use different models.
-- To be installed in Phase 2 (pulls in PyTorch).
+- Implemented in Phase 2 with `BAAI/bge-small-en-v1.5`; details in section 8.
 
 ---
 
-## 7. Embeddings & vector store
+## 8. Embeddings & vector store
 
 **2026-10-22 — CPU-only PyTorch**
 - Installed with `uv pip install torch --index-url https://download.pytorch.org/whl/cpu` before the other requirements.
@@ -142,7 +180,7 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 
 **2026-10-22 — Query instruction for questions only**
 - Questions are prefixed with `"Represent this sentence for searching relevant passages: "`, as recommended for BGE retrieval; chunks (passages) are embedded without it.
-- Playground observation: simple questions produce right answer, but top three scores are close, gaps are bigger with query instruction
+- Playground observation: simple questions produce the right answer, but the top three scores are close; the gaps are bigger with the query instruction.
 
 **2026-10-23 — Vector store: Chroma, persistent on disk**
 - `chromadb.PersistentClient(path="data/chroma")`, which is gitignored with the rest of `data/`.
@@ -166,7 +204,18 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 
 ---
 
-## 8. Evaluation
+## 9. Search (`search.py`)
+
+**2026-10-23 — `retrieve(question, k)` as the single retrieval entry point**
+- The model and collection are loaded lazily and cached with `functools.lru_cache(maxsize=1)`: the first call loads them, later calls reuse them.
+- The collection is opened with `get_collection` (never created or rebuilt during search); missing collection → clear "run index.py first" message.
+- Safeguard: search refuses to run if the collection's stored `embedding_model` differs from `MODEL_NAME`.
+- Questions are embedded with the query instruction and searched via `query_embeddings`.
+- Returns rank, chunk ID, page, section, distance, similarity (1 − distance) and text; command-line mode with `--k` and `--show-text`.
+
+---
+
+## 10. Evaluation
 
 **2026-10-20 — 25-question evaluation set written before pipeline code (`eval/questions.jsonl`)**
 - Mix: 10 fact, 5 synergy, 4 paraphrase, 3 version, 3 unanswerable.
@@ -180,3 +229,31 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 **2026-10-20 — Scoring rubric**
 - Retrieval hit: all `expected_pages` appear in the final retrieved chunks.
 - Answer score: 2 = correct and complete, 1 = partial, 0 = wrong or missing, −1 = hallucinated (confident claim not supported by the context). Hallucinations tracked separately.
+
+**2026-10-24 — Evaluation code is separate from the runtime pipeline**
+- Build scripts prepare data, runtime code answers questions, evaluation scripts measure the runtime. Users never run the evaluation; it is how every later change is judged.
+- Each run is saved under `eval/results/retrieval_<label>.json` (committed: small, and our own findings rather than wiki content).
+- `--label` only names the output file. A run labelled "reranker" before any reranker existed produced an identical copy of the baseline; it was deleted to avoid a misleading comparison.
+
+**2026-10-25 — Evidence-based metric added (evidence@k)**
+- Page-level hit@k was 100% from the start and too lenient: almost every question names its item, and any chunk from the right page counted, even Trivia without the answer.
+- Each answerable question now has an `evidence` list: short phrases taken from the wiki's answer text (specific to the answer, not just the item name). Evidence@k = a chunk in the top k contains any phrase (case- and whitespace-insensitive).
+- `evidence_in_corpus` checks whether a phrase exists in any chunk at all, to tell missing data or a phrase typo apart from a retrieval failure.
+
+**2026-10-25 — Retrieval baseline (plain vector search, k = 10)**
+
+| Metric | Score |
+|---|---|
+| Page hit@5 / hit@10 | 21/22 (95%) / 22/22 (100%) |
+| Evidence@3 | 15/22 (68%) |
+| Evidence@5 | 18/22 (82%) |
+| Evidence@10 | 21/22 (95%) |
+
+- Page hit@5 dropped from 100% to 95% (a paraphrase question) after the infobox data enlarged the summary chunks — changing chunk content changes rankings, so the eval is rerun after every change.
+- Phase 4 will pass roughly the top 5 chunks to the LLM, so evidence@5 is the number that matters. Three answers are retrieved but ranked 6th–10th.
+- **Phase 3 goal:** retrieve more candidates, rerank, keep 5; raise evidence@5 toward the evidence@10 ceiling (95%). A reranker can only reorder what retrieval found, so the one question missing at k = 10 needs a separate fix.
+
+**2026-10-25 — "I don't know" handling: loose cutoff + grounded prompt, not a tight threshold**
+- Top-1 distance: answerable 0.150–0.331 (mean 0.240), unanswerable 0.333–0.485 (mean 0.400).
+- The ranges no longer overlap after the infobox fix, but the margin is 0.002 and based on only 3 unanswerable questions — not reliable as a threshold.
+- Plan: a loose cutoff (~0.40) to skip the LLM call for clearly off-topic questions, plus a grounded prompt in Phase 4 (answer only from the retrieved context, say so when it isn't there) for cases near the boundary, such as a non-existent item name.

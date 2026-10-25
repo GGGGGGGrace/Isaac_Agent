@@ -15,6 +15,7 @@ Usage (from the repo root):
 import argparse
 import json
 import statistics
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -24,13 +25,24 @@ from search import retrieve
 QUESTIONS_PATH = Path("eval/questions.jsonl")
 RESULTS_DIR = Path("eval/results")
 K = 10
+CHUNKS_PATH = Path("data/chunks/chunks.jsonl")
+
+
+def norm(text: str) -> str:
+    """Lowercase and collapse whitespace so phrase matching ignores line breaks and case."""
+    return re.sub(r"\s+", " ", text).lower()
+
+
+def load_corpus() -> list[str]:
+    """All chunk texts, normalized, to check whether evidence exists anywhere at all."""
+    return [norm(json.loads(l)["text"]) for l in CHUNKS_PATH.open(encoding="utf-8")]
 
 
 def load_questions() -> list[dict]:
     return [json.loads(line) for line in QUESTIONS_PATH.open(encoding="utf-8") if line.strip()]
 
 
-def evaluate_question(q: dict, k: int) -> dict:
+def evaluate_question(q: dict, k: int, corpus) -> dict:
     """Run one question through retrieval and score it."""
     hits = retrieve(q["question"], k=k)
     pages = [h["page"] for h in hits]          # retrieved pages, in rank order
@@ -58,6 +70,20 @@ def evaluate_question(q: dict, k: int) -> dict:
     record["first_correct_distance"] = (
         round(hits[first_rank - 1]["distance"], 4) if first_rank else None
     )
+
+    phrases = [norm(p) for p in q.get("evidence", [])]
+    if phrases:
+        texts = [norm(h["text"]) for h in hits]
+        found_at = lambda n: any(p in t for t in texts[:n] for p in phrases)
+        record["evidence@3"] = found_at(3)
+        record["evidence@5"] = found_at(5)
+        record["evidence@10"] = found_at(10)
+        # Is the evidence in the index at all? Separates "missing data" from "bad retrieval".
+        record["evidence_in_corpus"] = any(p in t for t in corpus for p in phrases)
+    else:
+        record["evidence@3"] = record["evidence@5"] = record["evidence@10"] = None
+        record["evidence_in_corpus"] = None
+
     return record
 
 
@@ -86,6 +112,17 @@ def print_report(records: list[dict]) -> dict:
     print("\nOVERALL (answerable questions)")
     print(f"  hit@5:  {rate(answerable, 'hit@5')}")
     print(f"  hit@10: {rate(answerable, 'hit@10')}")
+
+    with_ev = [r for r in answerable if r.get("evidence@10") is not None]
+    print(f"  evidence@3:  {rate(with_ev, 'evidence@3')}")
+    print(f"  evidence@5:  {rate(with_ev, 'evidence@5')}")
+    print(f"  evidence@10: {rate(with_ev, 'evidence@10')}")
+
+    not_in_corpus = [r for r in with_ev if not r["evidence_in_corpus"]]
+    if not_in_corpus:
+        print("  ! evidence phrase not found in ANY chunk (check the phrase or the data):")
+        for r in not_in_corpus:
+            print(f"      {r['id']}: {r.get('expected_pages')}")
 
     # Per type
     print("\nBY TYPE (hit@5 | hit@10)")
@@ -138,7 +175,8 @@ def main() -> None:
     questions = load_questions()
     print(f"[eval] {len(questions)} questions, k={args.k}, model={MODEL_NAME}")
 
-    records = [evaluate_question(q, args.k) for q in questions]
+    corpus = load_corpus()
+    records = [evaluate_question(q, args.k, corpus) for q in questions]
     summary = print_report(records)
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

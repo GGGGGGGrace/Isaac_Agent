@@ -1,10 +1,10 @@
 {
   "label": "baseline",
-  "timestamp": "2026-10-24T00:25:08",
+  "timestamp": "2026-10-25T19:25:46",
   "model": "BAAI/bge-small-en-v1.5",
   "k": 10,
   "summary": {
-    "hit@5": "22/22 (100%)",
+    "hit@5": "21/22 (95%)",
     "hit@10": "22/22 (100%)",
     "by_type": {
       "fact": {
@@ -12,7 +12,7 @@
         "hit@10": "10/10 (100%)"
       },
       "paraphrase": {
-        "hit@5": "4/4 (100%)",
+        "hit@5": "3/4 (75%)",
         "hit@10": "4/4 (100%)"
       },
       "synergy": {
@@ -27,13 +27,13 @@
     "top_distance": {
       "answerable": {
         "min": 0.1503,
-        "max": 0.3373,
-        "mean": 0.2393
+        "max": 0.3305,
+        "mean": 0.2396
       },
       "unanswerable": {
         "min": 0.3332,
-        "max": 0.4579,
-        "mean": 0.3912
+        "max": 0.4853,
+        "mean": 0.4003
       }
     },
     "misses": []
@@ -54,9 +54,9 @@
         "Sacred Heart — Summary",
         "Prayer Card — Effects",
         "Immaculate Heart — Trivia",
-        "Prayer Card — Synergies",
         "Empty Heart — Synergies",
-        "Diplopia — Interactions"
+        "Diplopia — Interactions",
+        "Immaculate Heart — Effects"
       ],
       "top_distance": 0.1965,
       "hit@5": true,
@@ -75,13 +75,13 @@
         "Brimstone — Interactions",
         "Brimstone — Effects",
         "Lachryphagy — Interactions",
-        "Brimstone — Summary",
         "The Ludovico Technique — Synergies",
         "Brimstone — Synergies",
         "Haemolacria — Synergies",
         "Brimstone — Synergies",
         "Brimstone — Interactions",
-        "Isaac's Tears — Interactions"
+        "Isaac's Tears — Interactions",
+        "Brimstone — Trivia"
       ],
       "top_distance": 0.2145,
       "hit@5": true,
@@ -99,12 +99,12 @@
       "retrieved": [
         "The D6 — Interactions",
         "9 Volt — Effects",
-        "The D6 — Summary",
         "The D6 — Notes",
         "Eternal D6 — Interactions",
         "The D6 — Trivia",
         "Car Battery — Interactions",
         "The D6 — Effect",
+        "The D6 — Summary",
         "D7 — Synergies",
         "D8 — Interactions"
       ],
@@ -124,14 +124,14 @@
       "retrieved": [
         "Brimstone — Trivia",
         "Brimstone — Notes",
-        "Brimstone — Interactions",
-        "Brimstone — Interactions",
         "Lil Brimstone — Summary",
-        "Brimstone — Summary",
+        "Brimstone — Interactions",
+        "Brimstone — Interactions",
         "Brimstone — Synergies",
         "Brimstone — Effects",
         "Brimstone — Synergies",
-        "Brimstone — Interactions"
+        "Brimstone — Interactions",
+        "Brimstone — Summary"
       ],
       "top_distance": 0.2704,
       "hit@5": true,
@@ -151,12 +151,12 @@
         "Blood Rights — Synergies",
         "Blood Rights — Trivia",
         "Blood Rights — Notes",
-        "Blood Rights — Summary",
-        "A Pound of Flesh — Summary",
         "Blood Rights — Interactions",
-        "Sharp Plug — Summary",
+        "Blood Rights — Summary",
         "Bloody Lust — Synergies",
-        "Anemic — Trivia"
+        "Anemic — Trivia",
+        "Blood Bag — Notes",
+        "Blood Bag — Effects"
       ],
       "top_distance": 0.2696,
       "hit@5": true,
@@ -173,15 +173,15 @@
       ],
       "retrieved": [
         "Book of Shadows — Effect",
-        "Book of Shadows — Summary",
         "Celtic Cross — Effect",
         "Book of Shadows — Synergies",
         "Book of Shadows — Interactions",
+        "Book of Shadows — Summary",
         "Book of Shadows — Notes",
         "Book of Shadows — Trivia",
-        "Celtic Cross — Summary",
         "Virgo — Effects",
-        "Dark Arts — Summary"
+        "Circle of Protection — Summary",
+        "4.5 Volt — Synergies"
       ],
       "top_distance": 0.2508,
       "hit@5": true,
@@ -198,13 +198,13 @@
       ],
       "retrieved": [
         "Guppy's Paw — Notes",
-        "Guppy's Paw — Summary",
         "Guppy's Paw — Effects",
         "Converter — Trivia",
         "Guppy's Paw — Interactions",
         "Guppy's Paw — Bugs",
         "Guppy's Paw — Synergies",
         "Guppy's Paw — Trivia",
+        "Guppy's Paw — Summary",
         "Guppy's Collar — Notes",
         "Guppy's Eye — Effects"
       ],
@@ -222,22 +222,22 @@
         "Sacred Heart"
       ],
       "retrieved": [
-        "Bag of Crafting — Component Types and Qualities",
-        "Sacred Heart — Notes",
         "Sacred Heart — Summary",
-        "Sacred Heart — Trivia",
         "Bag of Crafting — Component Types and Qualities",
-        "Sacred Heart — Interactions",
+        "Raw Liver — Summary",
+        "Sacred Orb — Summary",
+        "Yum Heart — Summary",
+        "Sacred Heart — Notes",
+        "Immaculate Heart — Summary",
         "Alabaster Box — Summary",
-        "Sacred Heart — Effects",
-        "Immaculate Heart — Trivia",
-        "Chaos — Notes"
+        "Sacred Heart — Trivia",
+        "The Body — Summary"
       ],
-      "top_distance": 0.3373,
+      "top_distance": 0.2862,
       "hit@5": true,
       "hit@10": true,
-      "first_rank": 2,
-      "first_correct_distance": 0.3452
+      "first_rank": 1,
+      "first_correct_distance": 0.2862
     },
     {
       "id": "f09",
@@ -248,8 +248,8 @@
       ],
       "retrieved": [
         "Monstro's Tooth — Notes",
-        "Monstro's Tooth — Effect",
         "Monstro's Tooth — Summary",
+        "Monstro's Tooth — Effect",
         "Monstro's Lung — Interactions",
         "Monstro's Lung — Effects",
         "Tooth and Nail — Notes",
@@ -403,10 +403,10 @@
         "Brimstone — Trivia",
         "Brimstone — Synergies",
         "Sulfur — Synergies",
-        "Sulfur — Summary",
         "Brimstone — Interactions",
         "Sulfuric Acid — Interactions",
-        "Brimstone — Synergies"
+        "Brimstone — Synergies",
+        "Brimstone — Effects"
       ],
       "top_distance": 0.1532,
       "hit@5": true,
@@ -422,22 +422,22 @@
         "Brimstone"
       ],
       "retrieved": [
-        "Brimstone — Summary",
-        "Chocolate Milk — Summary",
-        "Mega Blast — Summary",
-        "Sharp Plug — Summary",
         "Bloody Gust — Synergies",
-        "Technology 2 — Summary",
-        "Cursed Eye — Summary",
-        "Technology — Summary",
         "Technology 2 — Effects",
-        "Tech.5 — Summary"
+        "Chocolate Milk — Synergies",
+        "Chocolate Milk — Interactions",
+        "Mega Blast — Summary",
+        "Brimstone — Summary",
+        "Bloodshot Eye — Trivia",
+        "Eye of the Occult — Notes",
+        "Bloody Lust — Synergies",
+        "Technology — Synergies"
       ],
-      "top_distance": 0.2846,
-      "hit@5": true,
+      "top_distance": 0.3293,
+      "hit@5": false,
       "hit@10": true,
-      "first_rank": 1,
-      "first_correct_distance": 0.2846
+      "first_rank": 6,
+      "first_correct_distance": 0.3428
     },
     {
       "id": "p02",
@@ -449,20 +449,20 @@
       "retrieved": [
         "Spindown Dice — Effects",
         "Glowing Hourglass — Synergies",
+        "Eternal D6 — Effects",
+        "Flip — Summary",
+        "The D6 — Notes",
         "The D6 — Summary",
         "D4 — Summary",
-        "Eternal D6 — Effects",
         "D20 — Summary",
-        "Flip — Summary",
-        "D10 — Summary",
-        "D7 — Summary",
-        "D12 — Summary"
+        "Schoolbag — Bugs",
+        "Glitched Crown — Effects"
       ],
       "top_distance": 0.2065,
       "hit@5": true,
       "hit@10": true,
-      "first_rank": 3,
-      "first_correct_distance": 0.2213
+      "first_rank": 5,
+      "first_correct_distance": 0.2538
     },
     {
       "id": "p03",
@@ -476,18 +476,18 @@
         "Mars — Notes",
         "Mars — Summary",
         "Belly Jelly — Synergies",
+        "Bot Fly — Summary",
+        "Psy Fly — Summary",
         "My Little Unicorn — Synergies",
         "Unicorn Stump — Synergies",
-        "Bot Fly — Summary",
         "No. 2 — Notes",
-        "How to Jump — Notes",
-        "The Gamekid — Synergies"
+        "How to Jump — Notes"
       ],
-      "top_distance": 0.2539,
+      "top_distance": 0.2681,
       "hit@5": true,
       "hit@10": true,
       "first_rank": 1,
-      "first_correct_distance": 0.2539
+      "first_correct_distance": 0.2681
     },
     {
       "id": "p04",
@@ -502,11 +502,11 @@
         "The Jar — Effects",
         "Greed's Gullet — Notes",
         "Dark Bum — Synergies",
-        "A Snack — Summary",
         "Alabaster Box — Notes",
         "Old Bandage — Effects",
         "Candy Heart — Notes",
-        "Empty Heart — Notes"
+        "Empty Heart — Notes",
+        "Empty Heart — Synergies"
       ],
       "top_distance": 0.2514,
       "hit@5": true,
@@ -573,15 +573,15 @@
       ],
       "retrieved": [
         "Sacred Heart — Notes",
+        "Sacred Heart — Summary",
         "Sacred Heart — Effects",
         "Sacred Heart — Interactions",
+        "Converter — Summary",
         "Isaac's Heart — Interactions",
+        "Placenta — Summary",
         "Isaac's Heart — Interactions",
         "Maggy's Bow — Effects",
-        "Sacred Heart — Trivia",
-        "Scapular — Summary",
-        "Dead Cat — Effects",
-        "Isaac's Heart — Effects"
+        "Isaac's Heart — Summary"
       ],
       "top_distance": 0.2116,
       "hit@5": true,
@@ -639,18 +639,18 @@
       "question": "Who composed the soundtrack for Rebirth?",
       "expected_pages": [],
       "retrieved": [
-        "Binky — Summary",
-        "Ankh — Summary",
-        "R Key — Summary",
-        "Fate — Summary",
+        "Synthoil — Summary",
+        "Jupiter — Summary",
         "Blank Card — Unlockable Achievements",
         "A Snack — Trivia",
         "Stop Watch — Unlockable Achievements",
         "Key Piece 2 — Trivia",
         "Key Piece 1 — Trivia",
-        "Blank Card — Trivia"
+        "Blank Card — Trivia",
+        "Chocolate Milk — Trivia",
+        "Key Piece 1 — Summary"
       ],
-      "top_distance": 0.4579,
+      "top_distance": 0.4853,
       "hit@5": null,
       "hit@10": null,
       "first_rank": null
