@@ -1,0 +1,773 @@
+{
+  "label": "reranker_v2",
+  "timestamp": "2026-11-13T00:28:36",
+  "model": "BAAI/bge-small-en-v1.5",
+  "k": 10,
+  "summary": {
+    "hit@5": "21/22 (95%)",
+    "hit@10": "22/22 (100%)",
+    "by_type": {
+      "fact": {
+        "hit@5": "10/10 (100%)",
+        "hit@10": "10/10 (100%)"
+      },
+      "paraphrase": {
+        "hit@5": "3/4 (75%)",
+        "hit@10": "4/4 (100%)"
+      },
+      "synergy": {
+        "hit@5": "5/5 (100%)",
+        "hit@10": "5/5 (100%)"
+      },
+      "version": {
+        "hit@5": "3/3 (100%)",
+        "hit@10": "3/3 (100%)"
+      }
+    },
+    "top_signal": "top_rerank_score",
+    "top_scores": {
+      "answerable": {
+        "min": 0.0557,
+        "max": 0.9978,
+        "mean": 0.838
+      },
+      "unanswerable": {
+        "min": 0.0005,
+        "max": 0.0043,
+        "mean": 0.0027
+      }
+    },
+    "misses": []
+  },
+  "questions": [
+    {
+      "id": "f01",
+      "type": "fact",
+      "question": "What does Sacred Heart do?",
+      "expected_pages": [
+        "Sacred Heart"
+      ],
+      "retrieved": [
+        "Sacred Heart — Trivia",
+        "Sacred Heart — Interactions",
+        "Sacred Heart — Notes",
+        "Diplopia — Interactions",
+        "Sacred Heart — Summary",
+        "Prayer Card — Synergies",
+        "Sacred Heart — Effects",
+        "Prayer Card — Effects",
+        "Immaculate Heart — Trivia",
+        "Empty Heart — Synergies"
+      ],
+      "top_distance": 0.1965,
+      "top_rerank_score": 0.9971,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.1965,
+      "evidence@3": false,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f02",
+      "type": "fact",
+      "question": "What does Brimstone do to my tears?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Interactions",
+        "Brimstone — Effects",
+        "Brimstone — Trivia",
+        "Brimstone — Synergies",
+        "Isaac's Tears — Interactions",
+        "The Ludovico Technique — Synergies",
+        "Brimstone — Interactions",
+        "Haemolacria — Synergies",
+        "Lachryphagy — Interactions",
+        "Brimstone — Synergies"
+      ],
+      "top_distance": 0.2145,
+      "top_rerank_score": 0.8684,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2145,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f03",
+      "type": "fact",
+      "question": "What does the D6 do and how long is its recharge?",
+      "expected_pages": [
+        "The D6"
+      ],
+      "retrieved": [
+        "The D6 — Summary",
+        "The D6 — Trivia",
+        "The D6 — Notes",
+        "The D6 — Effect",
+        "The D6 — Interactions",
+        "Car Battery — Interactions",
+        "Eternal D6 — Interactions",
+        "9 Volt — Effects",
+        "D8 — Interactions",
+        "D7 — Synergies"
+      ],
+      "top_distance": 0.3746,
+      "top_rerank_score": 0.9408,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.3746,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f04",
+      "type": "fact",
+      "question": "Where can I find Brimstone in a run?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Trivia",
+        "Brimstone — Interactions",
+        "Brimstone — Synergies",
+        "Brimstone — Interactions",
+        "Brimstone — Notes",
+        "Brimstone — Interactions",
+        "Brimstone — Interactions",
+        "Lil Brimstone — Summary",
+        "Brimstone — Synergies",
+        "Brimstone — Effects"
+      ],
+      "top_distance": 0.2704,
+      "top_rerank_score": 0.0557,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2704,
+      "evidence@3": false,
+      "evidence@5": false,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f05",
+      "type": "fact",
+      "question": "What does Blood Rights cost and what does it do?",
+      "expected_pages": [
+        "Blood Rights"
+      ],
+      "retrieved": [
+        "Blood Rights — Trivia",
+        "Blood Rights — Summary",
+        "Blood Rights — Notes",
+        "Blood Rights — Effect",
+        "Blood Rights — Synergies",
+        "Bloody Lust — Synergies",
+        "Blood Rights — Interactions",
+        "Blood Bag — Notes",
+        "Anemic — Trivia",
+        "Blood Bag — Effects"
+      ],
+      "top_distance": 0.3045,
+      "top_rerank_score": 0.466,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.3045,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f06",
+      "type": "fact",
+      "question": "How long does Book of Shadows protect me?",
+      "expected_pages": [
+        "Book of Shadows"
+      ],
+      "retrieved": [
+        "Book of Shadows — Effect",
+        "Book of Shadows — Summary",
+        "Celtic Cross — Effect",
+        "Virgo — Effects",
+        "Book of Shadows — Synergies",
+        "Book of Shadows — Trivia",
+        "4.5 Volt — Synergies",
+        "Book of Shadows — Notes",
+        "Book of Shadows — Interactions",
+        "My Shadow — Summary"
+      ],
+      "top_distance": 0.2508,
+      "top_rerank_score": 0.5463,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2508,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f07",
+      "type": "fact",
+      "question": "What does Guppy's Paw convert?",
+      "expected_pages": [
+        "Guppy's Paw"
+      ],
+      "retrieved": [
+        "Guppy's Paw — Effects",
+        "Converter — Trivia",
+        "Guppy's Paw — Interactions",
+        "Guppy's Paw — Summary",
+        "Guppy's Paw — Synergies",
+        "Guppy's Paw — Notes",
+        "Guppy's Paw — Trivia",
+        "Guppy's Paw — Bugs",
+        "Guppy's Collar — Notes",
+        "Guppy's Eye — Effects"
+      ],
+      "top_distance": 0.2404,
+      "top_rerank_score": 0.9572,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2404,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f08",
+      "type": "fact",
+      "question": "What quality is Sacred Heart and which room pool does it come from?",
+      "expected_pages": [
+        "Sacred Heart"
+      ],
+      "retrieved": [
+        "Sacred Heart — Summary",
+        "Sacred Heart — Notes",
+        "Bag of Crafting — Component Types and Qualities",
+        "Raw Liver — Summary",
+        "Sacred Orb — Summary",
+        "The Body — Summary",
+        "Yum Heart — Summary",
+        "Holy Grail — Summary",
+        "Mitre — Summary",
+        "Immaculate Heart — Summary"
+      ],
+      "top_distance": 0.2763,
+      "top_rerank_score": 0.9863,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2763,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f09",
+      "type": "fact",
+      "question": "What happens when I use Monstro's Tooth in an empty room?",
+      "expected_pages": [
+        "Monstro's Tooth"
+      ],
+      "retrieved": [
+        "Monstro's Tooth — Notes",
+        "Monstro's Tooth — Effect",
+        "Monstro's Tooth — Summary",
+        "Monstro's Tooth — Trivia",
+        "Monstro's Tooth — Synergies",
+        "Monstro's Lung — Effects",
+        "Epiphora — Notes",
+        "Monstro's Lung — Interactions",
+        "Monstro's Lung — Interactions",
+        "Tooth and Nail — Notes"
+      ],
+      "top_distance": 0.255,
+      "top_rerank_score": 0.9265,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.255,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "f10",
+      "type": "fact",
+      "question": "Which bosses can The Bible kill instantly, and when is it dangerous?",
+      "expected_pages": [
+        "The Bible"
+      ],
+      "retrieved": [
+        "The Bible — Trivia",
+        "The Bible — Effects",
+        "The Bible — Notes",
+        "Dream Catcher — Synergies",
+        "Gnawed Leaf — Interactions",
+        "The Bible — Bugs",
+        "Book of Revelations — Interactions",
+        "Sol — Notes",
+        "Abel — Trivia",
+        "Cube Baby — Notes"
+      ],
+      "top_distance": 0.279,
+      "top_rerank_score": 0.8213,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.279,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "s01",
+      "type": "synergy",
+      "question": "What happens if I use Tammy's Head while I have Brimstone?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Tammy's Head — Notes",
+        "Brimstone — Synergies",
+        "Tammy's Head — Synergies",
+        "Isaac's Tears — Notes",
+        "Tammy's Head — Summary",
+        "Tammy's Head — Effects",
+        "Tammy's Head — Bugs",
+        "Brimstone — Interactions",
+        "Tammy's Head — Trivia",
+        "Lil Brimstone — Synergies"
+      ],
+      "top_distance": 0.1824,
+      "top_rerank_score": 0.9943,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 2,
+      "first_correct_distance": 0.2446,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "s02",
+      "type": "synergy",
+      "question": "Is Brimstone plus Technology good?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Eye of the Occult — Synergies",
+        "The Ludovico Technique — Synergies",
+        "Brimstone — Synergies",
+        "Lodestone — Interactions",
+        "Brimstone — Synergies",
+        "Flat Stone — Trivia",
+        "Brimstone — Trivia",
+        "Brimstone — Synergies"
+      ],
+      "top_distance": 0.3318,
+      "top_rerank_score": 0.9687,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.3318,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "s03",
+      "type": "synergy",
+      "question": "What happens when you combine Mom's Knife and Brimstone?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "C Section — Synergies",
+        "Mom's Knife — Synergies",
+        "Mom's Knife — Synergies",
+        "Brimstone — Synergies",
+        "Mom's Knife — Synergies",
+        "Mom's Knife — Synergies",
+        "Brimstone — Interactions",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Mom's Knife — Interactions"
+      ],
+      "top_distance": 0.3019,
+      "top_rerank_score": 0.9978,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 4,
+      "first_correct_distance": 0.2117,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "s04",
+      "type": "synergy",
+      "question": "How does The Ludovico Technique work with Brimstone?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "The Ludovico Technique — Synergies",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "The Ludovico Technique — Notes",
+        "The Ludovico Technique — Synergies",
+        "The Ludovico Technique — Interactions",
+        "The Ludovico Technique — Trivia",
+        "The Ludovico Technique — Interactions",
+        "The Ludovico Technique — Effects",
+        "The Ludovico Technique — Synergies"
+      ],
+      "top_distance": 0.1758,
+      "top_rerank_score": 0.9758,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 2,
+      "first_correct_distance": 0.1503,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "s05",
+      "type": "synergy",
+      "question": "What does Sulfur do if I already have Brimstone?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Sulfur — Effects",
+        "Brimstone — Trivia",
+        "Sulfur — Notes",
+        "Brimstone — Synergies",
+        "Sulfur — Trivia",
+        "Sulfur — Synergies",
+        "Sulfuric Acid — Interactions",
+        "Brimstone — Effects",
+        "Brimstone — Synergies",
+        "Brimstone — Interactions"
+      ],
+      "top_distance": 0.2071,
+      "top_rerank_score": 0.9968,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 2,
+      "first_correct_distance": 0.2411,
+      "evidence@3": false,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "p01",
+      "type": "paraphrase",
+      "question": "Which item turns my shots into a blood laser that I have to charge up?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Summary",
+        "Mega Blast — Summary",
+        "Eye of the Occult — Notes",
+        "Chocolate Milk — Synergies",
+        "Sharp Plug — Summary",
+        "Chocolate Milk — Interactions",
+        "Bloody Gust — Synergies",
+        "Bloody Lust — Synergies",
+        "Technology 2 — Effects",
+        "Bloodshot Eye — Trivia"
+      ],
+      "top_distance": 0.3289,
+      "top_rerank_score": 0.4653,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.3289,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "p02",
+      "type": "paraphrase",
+      "question": "Is there an active item that rerolls every item pedestal in the room I'm in?",
+      "expected_pages": [
+        "The D6"
+      ],
+      "retrieved": [
+        "Spindown Dice — Effects",
+        "Eternal D6 — Effects",
+        "D10 — Summary",
+        "The D6 — Summary",
+        "The D6 — Notes",
+        "Flip — Summary",
+        "D4 — Summary",
+        "D20 — Summary",
+        "Glowing Hourglass — Synergies",
+        "Glitched Crown — Summary"
+      ],
+      "top_distance": 0.2065,
+      "top_rerank_score": 0.9837,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 4,
+      "first_correct_distance": 0.2366,
+      "evidence@3": false,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "p03",
+      "type": "paraphrase",
+      "question": "What item lets me fly and do an invincible dash into enemies?",
+      "expected_pages": [
+        "A Pony"
+      ],
+      "retrieved": [
+        "Belly Jelly — Synergies",
+        "My Little Unicorn — Synergies",
+        "Unicorn Stump — Synergies",
+        "Mars — Summary",
+        "How to Jump — Notes",
+        "A Pony — Summary",
+        "Psy Fly — Summary",
+        "Bot Fly — Summary",
+        "Mars — Notes",
+        "No. 2 — Notes"
+      ],
+      "top_distance": 0.3054,
+      "top_rerank_score": 0.622,
+      "hit@5": false,
+      "hit@10": true,
+      "first_rank": 6,
+      "first_correct_distance": 0.2539,
+      "evidence@3": false,
+      "evidence@5": false,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "p04",
+      "type": "paraphrase",
+      "question": "Is there something that stores my extra red hearts when I'm at full health so I can drop them later?",
+      "expected_pages": [
+        "The Jar"
+      ],
+      "retrieved": [
+        "The Jar — Summary",
+        "The Jar — Effects",
+        "A Snack — Summary",
+        "The Jar — Notes",
+        "Greed's Gullet — Notes",
+        "Dark Bum — Synergies",
+        "Old Bandage — Effects",
+        "Alabaster Box — Notes",
+        "Empty Heart — Notes",
+        "Candy Heart — Notes"
+      ],
+      "top_distance": 0.2645,
+      "top_rerank_score": 0.9974,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2645,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "v01",
+      "type": "version",
+      "question": "Did Brimstone's beam duration change in Repentance?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Effects",
+        "Brimstone — Interactions",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Brimstone — Interactions",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies",
+        "Brimstone — Synergies"
+      ],
+      "top_distance": 0.1952,
+      "top_rerank_score": 0.9383,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.1952,
+      "evidence@3": true,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "v02",
+      "type": "version",
+      "question": "What happens if I pick up two Brimstones in Repentance compared to older versions?",
+      "expected_pages": [
+        "Brimstone"
+      ],
+      "retrieved": [
+        "Brimstone — Synergies",
+        "Brimstone — Trivia",
+        "Brimstone — Bugs",
+        "D20 — Notes",
+        "Brimstone — Notes",
+        "Brimstone — Synergies",
+        "Lil Brimstone — Effect",
+        "More Options — Notes",
+        "More Options — Synergies",
+        "Mom's Box — Notes"
+      ],
+      "top_distance": 0.2489,
+      "top_rerank_score": 0.9829,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2489,
+      "evidence@3": false,
+      "evidence@5": false,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "v03",
+      "type": "version",
+      "question": "How is Sacred Heart different in Repentance from Afterbirth+?",
+      "expected_pages": [
+        "Sacred Heart"
+      ],
+      "retrieved": [
+        "Sacred Heart — Notes",
+        "Sacred Heart — Interactions",
+        "Sacred Heart — Summary",
+        "Maggy's Bow — Effects",
+        "Sacred Heart — Effects",
+        "Sacred Heart — Trivia",
+        "Isaac's Heart — Interactions",
+        "Isaac's Heart — Effects",
+        "Dead Cat — Effects",
+        "Isaac's Heart — Interactions"
+      ],
+      "top_distance": 0.2116,
+      "top_rerank_score": 0.9485,
+      "hit@5": true,
+      "hit@10": true,
+      "first_rank": 1,
+      "first_correct_distance": 0.2116,
+      "evidence@3": false,
+      "evidence@5": true,
+      "evidence@10": true,
+      "evidence_in_corpus": true
+    },
+    {
+      "id": "n01",
+      "type": "unanswerable",
+      "question": "How do I beat Ornstein and Smough in Dark Souls?",
+      "expected_pages": [],
+      "retrieved": [
+        "There's Options — Effects",
+        "Book of Virtues — Combinations",
+        "Pause — Effects",
+        "Urn of Souls — Effects",
+        "There's Options — Notes",
+        "Urn of Souls — Synergies",
+        "Suplex! — Notes",
+        "Dad's Note — How to Acquire",
+        "Friendly Ball — Notes",
+        "Vade Retro — Synergies"
+      ],
+      "top_distance": 0.411,
+      "top_rerank_score": 0.0033,
+      "hit@5": null,
+      "hit@10": null,
+      "first_rank": null
+    },
+    {
+      "id": "n02",
+      "type": "unanswerable",
+      "question": "What does the Quantum Banana item do?",
+      "expected_pages": [],
+      "retrieved": [
+        "No. 2 — Notes",
+        "Eye of the Occult — Notes",
+        "IV Bag — Notes",
+        "Metronome — Specific Item Effects",
+        "Metronome — Specific Item Effects",
+        "Everything Jar — Effects",
+        "Metronome — Specific Item Effects",
+        "Void — Interactions",
+        "Apple! — Interactions",
+        "A Pound of Flesh — Interactions"
+      ],
+      "top_distance": 0.3581,
+      "top_rerank_score": 0.0005,
+      "hit@5": null,
+      "hit@10": null,
+      "first_rank": null
+    },
+    {
+      "id": "n03",
+      "type": "unanswerable",
+      "question": "Who composed the soundtrack for Rebirth?",
+      "expected_pages": [],
+      "retrieved": [
+        "Chocolate Milk — Trivia",
+        "Blank Card — Unlockable Achievements",
+        "A Snack — Trivia",
+        "Synthoil — Summary",
+        "Key Piece 1 — Trivia",
+        "Key Piece 2 — Trivia",
+        "Blank Card — Trivia",
+        "Broken Watch — Unlockable Achievements",
+        "Stop Watch — Unlockable Achievements",
+        "King Baby — Trivia"
+      ],
+      "top_distance": 0.4971,
+      "top_rerank_score": 0.0043,
+      "hit@5": null,
+      "hit@10": null,
+      "first_rank": null
+    }
+  ]
+}

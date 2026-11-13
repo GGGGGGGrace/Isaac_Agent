@@ -257,3 +257,9 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Top-1 distance: answerable 0.150–0.331 (mean 0.240), unanswerable 0.333–0.485 (mean 0.400).
 - The ranges no longer overlap after the infobox fix, but the margin is 0.002 and based on only 3 unanswerable questions — not reliable as a threshold.
 - Plan: a loose cutoff (~0.40) to skip the LLM call for clearly off-topic questions, plus a grounded prompt in Phase 4 (answer only from the retrieved context, say so when it isn't there) for cases near the boundary, such as a non-existent item name.
+
+**2026-11-12 — Tags removed from summary chunks**
+- After the infobox fix, p01 ("which item turns my shots into a blood laser") lost Brimstone — Summary from rank 1. The Tags line (e.g. "Used by Lemegeton and Modeling Clay; Available to Tainted Lost") is game-mechanics metadata unrelated to what an item does, and pulled the summary's vector away from effect-style questions.
+- Removed Tags, kept Item pool. p01's summary returned to rank 1.
+- Eval fix: p01's evidence list now also accepts "blood laser" (the summary's wording) besides "charged blood laser" (the Effects wording).
+- Remaining evidence@5 misses (f03, p02, v02) all have the answer at ranks 6–9: reranker targets.

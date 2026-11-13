@@ -8,3 +8,5 @@ CHROMA_PATH = "data/chroma"
 CHUNKS_PATH = Path("data/chunks/chunks.jsonl")
 COLLECTION_NAME = "isaac_items"
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "  # questions only
+RERANK_MODEL = "BAAI/bge-reranker-base"
+RERANK_CANDIDATES = 20

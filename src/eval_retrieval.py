@@ -42,9 +42,9 @@ def load_questions() -> list[dict]:
     return [json.loads(line) for line in QUESTIONS_PATH.open(encoding="utf-8") if line.strip()]
 
 
-def evaluate_question(q: dict, k: int, corpus) -> dict:
+def evaluate_question(q: dict, k: int, corpus, rerank) -> dict:
     """Run one question through retrieval and score it."""
-    hits = retrieve(q["question"], k=k)
+    hits = retrieve(q["question"], k=k, rerank=rerank)
     pages = [h["page"] for h in hits]          # retrieved pages, in rank order
     expected = set(q["expected_pages"])
 
@@ -55,6 +55,7 @@ def evaluate_question(q: dict, k: int, corpus) -> dict:
         "expected_pages": q["expected_pages"],
         "retrieved": [f"{h['page']} — {h['section']}" for h in hits],
         "top_distance": round(hits[0]["distance"], 4) if hits else None,
+        "top_rerank_score": round(hits[0]["rerank_score"], 4) if hits and "rerank_score" in hits[0] else None,
     }
 
     if not expected:
@@ -100,13 +101,20 @@ def print_report(records: list[dict]) -> dict:
     unanswerable = [r for r in records if r["hit@10"] is None]
 
     # Per-question table
-    print(f"\n{'id':<5} {'type':<13} {'@5':<4} {'@10':<4} {'rank':<5} {'top_dist':<8}  question")
-    print("-" * 95)
+    reranked = any(r.get("top_rerank_score") is not None for r in records)
+    score_label = "top_score" if reranked else "top_dist"
+
+    def mark(v):
+        return "-" if v is None else ("✓" if v else "✗")
+
+    print(f"\n{'id':<5} {'type':<13} {'@5':<4} {'@10':<4} {'ev@3':<5} {'ev@5':<5} {'rank':<5} {score_label:<9}  question")
+    print("-" * 105)
     for r in records:
-        mark = lambda v: "-" if v is None else ("✓" if v else "✗")
         rank = "-" if r["first_rank"] is None else str(r["first_rank"])
+        score = r["top_rerank_score"] if reranked else r["top_distance"]
         print(f"{r['id']:<5} {r['type']:<13} {mark(r['hit@5']):<4} {mark(r['hit@10']):<4} "
-              f"{rank:<5} {r['top_distance']:<8.3f}  {r['question'][:50]}")
+              f"{mark(r.get('evidence@3')):<5} {mark(r.get('evidence@5')):<5} "
+              f"{rank:<5} {score:<9.3f}  {r['question'][:45]}")
 
     # Totals
     print("\nOVERALL (answerable questions)")
@@ -134,20 +142,32 @@ def print_report(records: list[dict]) -> dict:
 
     # Distances: is there a clean gap between real and off-topic questions?
     print("\nTOP-1 DISTANCE (lower = closer match)")
-    ans_d = [r["top_distance"] for r in answerable]
-    una_d = [r["top_distance"] for r in unanswerable]
-    distances = {}
-    if ans_d:
-        distances["answerable"] = {"min": min(ans_d), "max": max(ans_d), "mean": round(statistics.mean(ans_d), 4)}
-        print(f"  answerable:   min {min(ans_d):.3f}  max {max(ans_d):.3f}  mean {statistics.mean(ans_d):.3f}")
-    if una_d:
-        distances["unanswerable"] = {"min": min(una_d), "max": max(una_d), "mean": round(statistics.mean(una_d), 4)}
-        print(f"  unanswerable: min {min(una_d):.3f}  max {max(una_d):.3f}  mean {statistics.mean(una_d):.3f}")
-    if ans_d and una_d:
-        if max(ans_d) < min(una_d):
-            print(f"  -> clean gap: a threshold between {max(ans_d):.3f} and {min(una_d):.3f} separates them")
+    # Vector distance: lower = closer.  Rerank score: higher = more relevant.
+    if reranked:
+        key, title, higher_is_better = "top_rerank_score", "TOP-1 RERANK SCORE (higher = more relevant)", True
+    else:
+        key, title, higher_is_better = "top_distance", "TOP-1 DISTANCE (lower = closer match)", False
+
+    print(f"\n{title}")
+    ans_s = [r[key] for r in answerable if r[key] is not None]
+    una_s = [r[key] for r in unanswerable if r[key] is not None]
+    scores = {}
+    for name, vals in (("answerable", ans_s), ("unanswerable", una_s)):
+        if vals:
+            scores[name] = {"min": min(vals), "max": max(vals), "mean": round(statistics.mean(vals), 4)}
+            print(f"  {name + ':':<14}min {min(vals):.3f}  max {max(vals):.3f}  mean {statistics.mean(vals):.3f}")
+
+    if ans_s and una_s:
+        if higher_is_better:
+            gap = min(ans_s) > max(una_s)
+            lo, hi = max(una_s), min(ans_s)
         else:
-            print("  -> ranges overlap: a distance threshold alone won't separate them cleanly")
+            gap = max(ans_s) < min(una_s)
+            lo, hi = max(ans_s), min(una_s)
+        if gap:
+            print(f"  -> clean gap: a threshold between {lo:.3f} and {hi:.3f} separates them (margin {hi - lo:.3f})")
+        else:
+            print("  -> ranges overlap: a threshold alone won't separate them cleanly")
 
     # Misses, for follow-up with search.py --show-text
     misses = [r for r in answerable if not r["hit@10"]]
@@ -161,7 +181,8 @@ def print_report(records: list[dict]) -> dict:
         "hit@5": rate(answerable, "hit@5"),
         "hit@10": rate(answerable, "hit@10"),
         "by_type": by_type,
-        "top_distance": distances,
+        "top_signal": key,
+        "top_scores": scores,
         "misses": [r["id"] for r in misses],
     }
 
@@ -170,13 +191,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate retrieval on eval/questions.jsonl.")
     parser.add_argument("--label", default="baseline", help="name for this run's results file")
     parser.add_argument("--k", type=int, default=K, help=f"results per question (default {K})")
+    parser.add_argument("--rerank", action="store_true",                          # NEW
+                            help="rerank candidates with the cross-encoder")
     args = parser.parse_args()
 
     questions = load_questions()
     print(f"[eval] {len(questions)} questions, k={args.k}, model={MODEL_NAME}")
 
     corpus = load_corpus()
-    records = [evaluate_question(q, args.k, corpus) for q in questions]
+    records = [evaluate_question(q, args.k, corpus, args.rerank) for q in questions]
     summary = print_report(records)
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

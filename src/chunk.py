@@ -394,8 +394,8 @@ def summary_chunk(item: dict, infobox: dict) -> dict:
         lines.append(f"Recharge: {item['recharge']}")
     if infobox.get("item_pool"):
         lines.append("Item pool: " + "; ".join(infobox["item_pool"]))
-    if infobox.get("tags"):
-        lines.append("Tags: " + "; ".join(infobox["tags"]))
+    # if infobox.get("tags"):
+    #     lines.append("Tags: " + "; ".join(infobox["tags"]))
     if item.get("quote"):
         lines.append(f"Pickup quote: \"{item['quote']}\"")
     if item.get("description"):

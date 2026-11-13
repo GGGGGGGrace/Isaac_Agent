@@ -4,7 +4,7 @@ from functools import lru_cache
 
 import chromadb
 
-from config import MODEL_NAME, CHROMA_PATH, COLLECTION_NAME, QUERY_INSTRUCTION
+from config import MODEL_NAME, QUERY_INSTRUCTION, CHROMA_PATH, COLLECTION_NAME, RERANK_CANDIDATES
 from sentence_transformers import SentenceTransformer
 
 
@@ -39,10 +39,11 @@ def get_collection():
 
     return collection
 
-def retrieve(question: str, k: int = 10) -> list[dict]:
+def retrieve(question: str, k: int = 10, rerank: bool = False) -> list[dict]:
     model = get_model()
     q_vec = model.encode(QUERY_INSTRUCTION + question, normalize_embeddings=True)
     collection = get_collection()
+    n = max(k, RERANK_CANDIDATES) if rerank else k
     result = collection.query(
         query_embeddings=[q_vec.tolist()],
         n_results=k,
@@ -66,6 +67,9 @@ def retrieve(question: str, k: int = 10) -> list[dict]:
             "similarity": round(1 - dist, 4),   # cosine: distance = 1 - similarity
             "text": text,
         })
+    if rerank:
+        from rerank import rerank as rerank_hits   # imported here: only loads the cross-encoder when used
+        hits = rerank_hits(question, hits, top_n=k)
     return hits
 
 
@@ -74,9 +78,11 @@ def main() -> None:
     parser.add_argument("question", help="the question to search for (quote it)")
     parser.add_argument("--k", type=int, default=10, help="number of results (default 10)")
     parser.add_argument("--show-text", action="store_true", help="also print each chunk's text")
+    parser.add_argument("--rerank", action="store_true",                          # NEW
+                        help="rerank candidates with the cross-encoder")
     args = parser.parse_args()
  
-    hits = retrieve(args.question, k=args.k)
+    hits = retrieve(args.question, k=args.k, rerank=args.rerank)
  
     print(f"\nQ: {args.question}\n")
     for h in hits:
