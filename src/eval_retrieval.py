@@ -140,8 +140,6 @@ def print_report(records: list[dict]) -> dict:
         by_type[t] = {"hit@5": rate(group, "hit@5"), "hit@10": rate(group, "hit@10")}
         print(f"  {t:<12} {by_type[t]['hit@5']:<14} | {by_type[t]['hit@10']}")
 
-    # Distances: is there a clean gap between real and off-topic questions?
-    print("\nTOP-1 DISTANCE (lower = closer match)")
     # Vector distance: lower = closer.  Rerank score: higher = more relevant.
     if reranked:
         key, title, higher_is_better = "top_rerank_score", "TOP-1 RERANK SCORE (higher = more relevant)", True

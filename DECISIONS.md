@@ -263,3 +263,15 @@ Newest entries go at the bottom of each section. Dates are when the decision was
 - Removed Tags, kept Item pool. p01's summary returned to rank 1.
 - Eval fix: p01's evidence list now also accepts "blood laser" (the summary's wording) besides "charged blood laser" (the Effects wording).
 - Remaining evidence@5 misses (f03, p02, v02) all have the answer at ranks 6–9: reranker targets.
+
+**2026-11-13 — Known limitation: item names that are ordinary words**
+- f04 "Where can I find Brimstone in a run?": the reranker's top result is Brimstone — Trivia (the real-world meaning of "brimstone"), with a top score of only 0.056; the summary with "Found in (item pool)" ranks #4 at 0.020.
+- Cause: the cross-encoder reads "Brimstone" as the substance (sulfur), not the game item. f11 ("Where does Sacred Heart show up?") scores 0.711 with the same kind of chunk.
+- Still passes evidence@5, and stays above the 0.02 refusal threshold, but with little margin.
+- Planned fixes: query rewriting into game terms (Phase 4), and item-name detection / a get_item tool (Phase 6). f04 is kept unchanged as an honest test case.
+
+**2026-11-13 — "I don't know" threshold: top rerank score < 0.01**
+- Stored in `config.py` as `RERANK_REFUSAL_THRESHOLD`; applied in the answer pipeline (Phase 4), not inside retrieve().
+- Data (reranker_v3, 26 questions): unanswerable top scores 0.001–0.004; lowest answerable 0.056 (f04), next lowest 0.444.
+- Set closer to the unanswerable side because errors are asymmetric: a false refusal loses a real answer, while a false accept still meets the grounded prompt, which can refuse.
+- Provisional: based on 3 unanswerable questions; to be re-checked after adding more off-topic / fake-item / out-of-scope questions.

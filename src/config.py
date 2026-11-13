@@ -10,3 +10,4 @@ COLLECTION_NAME = "isaac_items"
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "  # questions only
 RERANK_MODEL = "BAAI/bge-reranker-base"
 RERANK_CANDIDATES = 20
+RERANK_REFUSAL_THRESHOLD = 0.01   # top rerank score below this -> "not in the wiki", skip the LLM
